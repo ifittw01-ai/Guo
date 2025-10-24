@@ -311,6 +311,49 @@ section {
     position: relative;
 }
 
+.profile-photo {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+    display: block;
+}
+
+.social-links-bottom {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.social-icon-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 12px 24px;
+    background: #1877f2;
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+}
+
+.social-icon-link:hover {
+    background: #0d65d9;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.social-icon-link svg {
+    width: 20px;
+    height: 20px;
+}
+
+.social-icon-link span {
+    font-size: 0.95rem;
+}
+
 .image-placeholder {
     width: 100%;
     aspect-ratio: 1;
@@ -616,6 +659,41 @@ section {
 .contact-card p {
     color: var(--gray-color);
     margin: 0;
+}
+
+/* Social Card Styles */
+.social-card .social-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.social-card .social-header h3 {
+    margin: 0;
+}
+
+.facebook-icon {
+    width: 45px;
+    height: 45px;
+    background: #1877f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.facebook-icon:hover {
+    background: #0d65d9;
+    transform: scale(1.1);
+}
+
+.facebook-icon svg {
+    width: 28px;
+    height: 28px;
+    color: var(--white);
 }
 
 .social-link {
