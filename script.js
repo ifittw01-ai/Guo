@@ -247,6 +247,7 @@ function showMessage(text, type = 'success') {
 // Helper function to show detailed messages
 function showDetailedMessage(text, type = 'success') {
     const bgColor = type === 'success' ? '#2c5f2d' : '#d32f2f';
+    const accentColor = type === 'success' ? '#97c93d' : '#ff6b6b';
     
     // Create overlay
     const overlay = document.createElement('div');
@@ -256,7 +257,8 @@ function showDetailedMessage(text, type = 'success') {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
         z-index: 9999;
         animation: fadeIn 0.3s ease;
     `;
@@ -268,70 +270,193 @@ function showDetailedMessage(text, type = 'success') {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: white;
+        background: linear-gradient(to bottom, white 0%, #fafafa 100%);
         color: #333;
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        padding: 0;
+        border-radius: 20px;
+        box-shadow: 0 25px 80px rgba(0,0,0,0.4);
         z-index: 10000;
-        max-width: 500px;
+        max-width: 550px;
         width: 90%;
-        animation: slideDown 0.4s ease;
-        border-top: 5px solid ${bgColor};
+        animation: slideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        overflow: hidden;
     `;
     
-    // Add icon
-    const icon = document.createElement('div');
-    icon.style.cssText = `
-        width: 60px;
-        height: 60px;
-        background: ${bgColor};
+    // Add gradient header
+    const header = document.createElement('div');
+    header.style.cssText = `
+        background: linear-gradient(135deg, ${bgColor} 0%, ${accentColor} 100%);
+        padding: 40px 40px 80px 40px;
+        text-align: center;
+        position: relative;
+    `;
+    
+    // Add success icon with animation
+    const iconContainer = document.createElement('div');
+    iconContainer.style.cssText = `
+        width: 80px;
+        height: 80px;
+        background: white;
         border-radius: 50%;
-        margin: 0 auto 20px;
+        margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
     `;
-    icon.textContent = '✓';
-    icon.style.color = 'white';
     
-    // Add message text
-    const messageText = document.createElement('div');
-    messageText.style.cssText = `
-        white-space: pre-line;
-        line-height: 1.8;
-        margin-bottom: 25px;
-        text-align: left;
-        font-size: 15px;
+    iconContainer.innerHTML = `
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="${bgColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
     `;
-    messageText.textContent = text;
+    
+    // Add title
+    const title = document.createElement('h2');
+    title.textContent = 'Thank You!';
+    title.style.cssText = `
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 20px 0 0 0;
+        letter-spacing: -0.5px;
+    `;
+    
+    header.appendChild(iconContainer);
+    header.appendChild(title);
+    
+    // Add content area
+    const content = document.createElement('div');
+    content.style.cssText = `
+        padding: 40px;
+        margin-top: -40px;
+        background: white;
+        border-radius: 20px 20px 0 0;
+        position: relative;
+    `;
+    
+    // Parse message and create styled content
+    const lines = text.split('\n');
+    lines.forEach((line, index) => {
+        const p = document.createElement('p');
+        p.style.cssText = `
+            margin: 0 0 15px 0;
+            line-height: 1.8;
+            font-size: 15px;
+            color: #555;
+        `;
+        
+        // Style specific lines
+        if (index === 0) {
+            p.style.fontSize = '17px';
+            p.style.fontWeight = '600';
+            p.style.color = '#333';
+            p.style.marginBottom = '20px';
+        }
+        
+        if (line.includes('Best regards')) {
+            p.style.marginTop = '25px';
+            p.style.fontSize = '14px';
+            p.style.color = '#999';
+        }
+        
+        if (line.includes('Mr. Guo')) {
+            p.style.fontSize = '16px';
+            p.style.fontWeight = '600';
+            p.style.color = bgColor;
+        }
+        
+        // Make email clickable
+        if (line.includes('📧 contact@ifittw.com')) {
+            const emailLink = document.createElement('a');
+            emailLink.href = 'mailto:contact@ifittw.com';
+            emailLink.innerHTML = '📧 <strong>contact@ifittw.com</strong>';
+            emailLink.style.cssText = `
+                color: ${bgColor};
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 15px;
+                background: #f0f7f0;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                font-size: 15px;
+            `;
+            emailLink.onmouseover = function() {
+                this.style.background = '#e0f0e0';
+                this.style.transform = 'translateX(5px)';
+            };
+            emailLink.onmouseout = function() {
+                this.style.background = '#f0f7f0';
+                this.style.transform = 'translateX(0)';
+            };
+            p.appendChild(emailLink);
+        } else if (line.includes('Website:')) {
+            const url = line.replace('Website: ', '').trim();
+            const websiteLink = document.createElement('a');
+            websiteLink.href = url;
+            websiteLink.target = '_blank';
+            websiteLink.innerHTML = '🌐 <strong>' + url + '</strong>';
+            websiteLink.style.cssText = `
+                color: ${bgColor};
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 15px;
+                background: #f0f7f0;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+                font-size: 15px;
+            `;
+            websiteLink.onmouseover = function() {
+                this.style.background = '#e0f0e0';
+                this.style.transform = 'translateX(5px)';
+            };
+            websiteLink.onmouseout = function() {
+                this.style.background = '#f0f7f0';
+                this.style.transform = 'translateX(0)';
+            };
+            p.appendChild(websiteLink);
+        } else if (line.trim()) {
+            p.textContent = line;
+        } else {
+            p.style.height = '10px';
+        }
+        
+        content.appendChild(p);
+    });
     
     // Add close button
     const closeButton = document.createElement('button');
-    closeButton.textContent = 'OK';
+    closeButton.textContent = 'Got it!';
     closeButton.style.cssText = `
-        background: ${bgColor};
+        background: linear-gradient(135deg, ${bgColor} 0%, ${accentColor} 100%);
         color: white;
         border: none;
-        padding: 12px 40px;
+        padding: 14px 40px;
         border-radius: 50px;
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
         display: block;
-        margin: 0 auto;
+        margin: 30px auto 0 auto;
+        box-shadow: 0 4px 15px rgba(44, 95, 45, 0.3);
+        width: 100%;
+        max-width: 200px;
     `;
     
     closeButton.onmouseover = function() {
         this.style.transform = 'translateY(-2px)';
-        this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+        this.style.boxShadow = '0 6px 20px rgba(44, 95, 45, 0.4)';
     };
     
     closeButton.onmouseout = function() {
         this.style.transform = 'translateY(0)';
-        this.style.boxShadow = 'none';
+        this.style.boxShadow = '0 4px 15px rgba(44, 95, 45, 0.3)';
     };
     
     closeButton.onclick = function() {
@@ -347,10 +472,11 @@ function showDetailedMessage(text, type = 'success') {
         }, 300);
     };
     
+    content.appendChild(closeButton);
+    
     // Assemble the message box
-    messageBox.appendChild(icon);
-    messageBox.appendChild(messageText);
-    messageBox.appendChild(closeButton);
+    messageBox.appendChild(header);
+    messageBox.appendChild(content);
     
     // Add to page
     document.body.appendChild(overlay);
@@ -366,22 +492,22 @@ style.textContent = `
     @keyframes slideDown {
         from {
             opacity: 0;
-            transform: translateX(-50%) translateY(-20px);
+            transform: translate(-50%, -60%) scale(0.9);
         }
         to {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translate(-50%, -50%) scale(1);
         }
     }
     
     @keyframes slideUp {
         from {
             opacity: 1;
-            transform: translateX(-50%) translateY(0);
+            transform: translate(-50%, -50%) scale(1);
         }
         to {
             opacity: 0;
-            transform: translateX(-50%) translateY(-20px);
+            transform: translate(-50%, -40%) scale(0.95);
         }
     }
     
@@ -400,6 +526,17 @@ style.textContent = `
         }
         to {
             opacity: 0;
+        }
+    }
+    
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
         }
     }
 `;
