@@ -249,6 +249,9 @@ function showDetailedMessage(text, type = 'success') {
     const bgColor = type === 'success' ? '#2c5f2d' : '#d32f2f';
     const accentColor = type === 'success' ? '#97c93d' : '#ff6b6b';
     
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+    
     // Create overlay
     const overlay = document.createElement('div');
     overlay.style.cssText = `
@@ -328,12 +331,15 @@ function showDetailedMessage(text, type = 'success') {
     
     // Add content area
     const content = document.createElement('div');
+    content.className = 'message-scrollable';
     content.style.cssText = `
         padding: 40px;
         margin-top: -40px;
         background: white;
         border-radius: 20px 20px 0 0;
         position: relative;
+        max-height: 60vh;
+        overflow-y: auto;
     `;
     
     // Parse message and create styled content
@@ -460,6 +466,9 @@ function showDetailedMessage(text, type = 'success') {
     };
     
     closeButton.onclick = function() {
+        // Restore background scrolling
+        document.body.style.overflow = '';
+        
         overlay.style.animation = 'fadeOut 0.3s ease';
         messageBox.style.animation = 'slideUp 0.3s ease';
         setTimeout(() => {
@@ -538,6 +547,25 @@ style.textContent = `
             transform: scale(1);
             opacity: 1;
         }
+    }
+    
+    /* Custom scrollbar for message box */
+    .message-scrollable::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .message-scrollable::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .message-scrollable::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #2c5f2d 0%, #97c93d 100%);
+        border-radius: 10px;
+    }
+    
+    .message-scrollable::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #1f4420 0%, #7fb32d 100%);
     }
 `;
 document.head.appendChild(style);
