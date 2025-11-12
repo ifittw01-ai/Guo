@@ -113,8 +113,19 @@ contactForm.addEventListener('submit', (e) => {
         console.log('提示：完成 EmailJS 配置後，資料將自動發送到 contact@ifittw.com');
         
         setTimeout(function() {
-            // Show success message
-            showMessage('訊息已成功送出！我們會盡快與您聯絡。', 'success');
+            // Show detailed success message
+            const message = `I have received your inquiry and will reply to you as soon as possible.
+
+If it is urgent, please email me directly.
+
+Best regards,
+
+Mr. Guo, Zhang-Ji
+
+📧 contact@ifittw.com
+Website: https://www.shengpengintl.com`;
+            
+            showDetailedMessage(message, 'success');
             
             // Reset form
             contactForm.reset();
@@ -132,8 +143,19 @@ contactForm.addEventListener('submit', (e) => {
         .then(function(response) {
             console.log('Email sent successfully!', response.status, response.text);
             
-            // Show success message
-            showMessage('訊息已成功送出！我們會盡快與您聯絡。', 'success');
+            // Show detailed success message
+            const message = `I have received your inquiry and will reply to you as soon as possible.
+
+If it is urgent, please email me directly.
+
+Best regards,
+
+Mr. Guo, Zhang-Ji
+
+📧 contact@ifittw.com
+Website: https://www.shengpengintl.com`;
+            
+            showDetailedMessage(message, 'success');
             
             // Reset form
             contactForm.reset();
@@ -186,6 +208,122 @@ function showMessage(text, type = 'success') {
     }, 4000);
 }
 
+// Helper function to show detailed messages
+function showDetailedMessage(text, type = 'success') {
+    const bgColor = type === 'success' ? '#2c5f2d' : '#d32f2f';
+    
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        animation: fadeIn 0.3s ease;
+    `;
+    
+    // Create message box
+    const messageBox = document.createElement('div');
+    messageBox.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        color: #333;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        z-index: 10000;
+        max-width: 500px;
+        width: 90%;
+        animation: slideDown 0.4s ease;
+        border-top: 5px solid ${bgColor};
+    `;
+    
+    // Add icon
+    const icon = document.createElement('div');
+    icon.style.cssText = `
+        width: 60px;
+        height: 60px;
+        background: ${bgColor};
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+    `;
+    icon.textContent = '✓';
+    icon.style.color = 'white';
+    
+    // Add message text
+    const messageText = document.createElement('div');
+    messageText.style.cssText = `
+        white-space: pre-line;
+        line-height: 1.8;
+        margin-bottom: 25px;
+        text-align: left;
+        font-size: 15px;
+    `;
+    messageText.textContent = text;
+    
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'OK';
+    closeButton.style.cssText = `
+        background: ${bgColor};
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 0 auto;
+    `;
+    
+    closeButton.onmouseover = function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+    };
+    
+    closeButton.onmouseout = function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = 'none';
+    };
+    
+    closeButton.onclick = function() {
+        overlay.style.animation = 'fadeOut 0.3s ease';
+        messageBox.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => {
+            if (document.body.contains(overlay)) {
+                document.body.removeChild(overlay);
+            }
+            if (document.body.contains(messageBox)) {
+                document.body.removeChild(messageBox);
+            }
+        }, 300);
+    };
+    
+    // Assemble the message box
+    messageBox.appendChild(icon);
+    messageBox.appendChild(messageText);
+    messageBox.appendChild(closeButton);
+    
+    // Add to page
+    document.body.appendChild(overlay);
+    document.body.appendChild(messageBox);
+    
+    // Click overlay to close
+    overlay.onclick = closeButton.onclick;
+}
+
 // Add slide animations CSS
 const style = document.createElement('style');
 style.textContent = `
@@ -208,6 +346,24 @@ style.textContent = `
         to {
             opacity: 0;
             transform: translateX(-50%) translateY(-20px);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
         }
     }
 `;
